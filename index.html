@@ -9,68 +9,41 @@
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family:Arial, sans-serif;
+  font-family:Arial,sans-serif;
   background:linear-gradient(180deg,#0a7a3d,#f4c430);
   display:flex;
   justify-content:center;
 }
-.app{
-  width:100%;
-  max-width:420px;
-  padding:14px;
-}
+.app{width:100%;max-width:420px;padding:14px}
 .card{
   background:#fff;
   border-radius:18px;
   padding:16px;
-  box-shadow:0 15px 40px rgba(0,0,0,.35);
+  box-shadow:0 15px 40px rgba(0,0,0,.35)
 }
 h1,h2,h3{text-align:center;color:#0a7a3d}
 button,input{
-  width:100%;
-  padding:12px;
-  margin:6px 0;
-  border-radius:12px;
-  border:1px solid #ccc;
-  font-size:14px;
+  width:100%;padding:12px;margin:6px 0;
+  border-radius:12px;border:1px solid #ccc;font-size:14px
 }
 button{
   background:linear-gradient(135deg,#0a7a3d,#f4c430);
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
+  color:#fff;font-weight:700;cursor:pointer
 }
 .red{background:#e74c3c}
 .gray{background:#ddd;color:#222}
-.box{
-  background:#f7fdf9;
-  border-radius:14px;
-  padding:12px;
-  margin:10px 0;
-}
+.box{background:#f7fdf9;border-radius:14px;padding:12px;margin:10px 0}
 .hidden{display:none}
-.valor{
-  font-size:22px;
-  font-weight:700;
-  color:#e60000;
-  animation:p 1s infinite;
-}
-@keyframes p{0%{opacity:1}50%{opacity:.3}100%{opacity:1}}
-.logo{
-  display:block;
-  margin:0 auto 10px;
-  width:90px;
-}
+.logo{display:block;margin:0 auto 10px;width:90px}
 </style>
 </head>
 
 <body>
-<div class="app">
-<div class="card">
+<div class="app"><div class="card">
 
 <!-- HOME -->
 <div id="home">
-<img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Brasao_oficial_do_Brasil.png" class="logo">
+<img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Brasao_oficial_do_Brasil.png">
 <h1>PORTAL GOV</h1>
 <button id="btnAcessar">🔐 Acessar</button>
 </div>
@@ -81,19 +54,18 @@ button{
 <input id="luser" placeholder="Login">
 <input id="lpass" type="password" placeholder="Senha">
 <button id="btnEntrar">Entrar</button>
-<button class="gray" id="btnVoltar">Voltar</button>
+<button id="btnVoltar" class="gray">Voltar</button>
 <p id="msg"></p>
 </div>
 
 <!-- PAINEL -->
 <div id="painel" class="hidden">
-<img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Brasao_oficial_do_Brasil.png" class="logo">
+<img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Brasao_oficial_do_Brasil.png">
 <h2 id="titulo"></h2>
 
 <div class="box">
-Saldo disponível:<br>
-<span id="saldo" class="valor"></span><br>
-Bloqueado: R$ <span id="bloq"></span>
+Saldo: <span id="saldo"></span><br>
+Bloqueado: <span id="bloq"></span>
 </div>
 
 <div class="box">
@@ -104,17 +76,19 @@ Bloqueado: R$ <span id="bloq"></span>
 </div>
 
 <div class="box hidden" id="boxFundador">
-<h3>👑 FUNDADOR</h3>
-<button id="btnCriarSenhaNB">🔐 Criar/Alterar senha NB</button>
+<h3>👑 ADMINISTRAÇÃO</h3>
+<button id="btnCriarConta">➕ Criar Conta</button>
+<button id="btnApagarConta" class="red">🗑 Apagar Conta</button>
+<div id="listaContas"></div>
+<hr>
+<button id="btnCriarSenhaNB">🔐 Criar / Alterar senha NB</button>
 <button id="btnBloquearNB" class="red">🚫 Bloquear NB</button>
 </div>
 
 <button id="btnNBDados">🔑 NB DADOS</button>
-<button class="red" id="btnSair">🚪 Sair</button>
-</div>
+<button id="btnSair" class="red">🚪 Sair</button>
 
-</div>
-</div>
+</div></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -134,125 +108,140 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* CONFIG */
-const FUNDADOR_LOGIN = "FUNDADOR";
-const FUNDADOR_SENHA = "2007";
-let modoNB = false;
+const FUNDADOR_LOGIN="FUNDADOR";
+const FUNDADOR_SENHA="2007";
+let modoNB=false;
 
 /* TELAS */
 function tela(id){
-  ["home","login","painel"].forEach(t=>document.getElementById(t).classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-}
-function moeda(v){
-  return v.toLocaleString("pt-BR",{minimumFractionDigits:2});
+ ["home","login","painel"].forEach(t=>document.getElementById(t).classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
 }
 
 /* INIT */
 async function init(){
-  const snap = await get(ref(db,"contas"));
-  let contas = snap.val() || [];
-  if(!Array.isArray(contas)) contas = Object.values(contas);
+ const snap=await get(ref(db,"contas"));
+ let contas=snap.val()||[];
+ if(!Array.isArray(contas)) contas=Object.values(contas);
 
-  if(!contas.find(c=>c.login===FUNDADOR_LOGIN)){
-    contas.push({
-      login:FUNDADOR_LOGIN,
-      senha:FUNDADOR_SENHA,
-      tipo:"Fundador",
-      saldo:1000000000,
-      bloq:0
-    });
-    await set(ref(db,"contas"),contas);
-  }
+ if(!contas.find(c=>c.login===FUNDADOR_LOGIN)){
+   contas.push({login:FUNDADOR_LOGIN,senha:FUNDADOR_SENHA,tipo:"Fundador",saldo:1000000,bloq:0});
+   await set(ref(db,"contas"),contas);
+ }
 }
 init();
 
 /* LOGIN */
-btnEntrar.onclick = async ()=>{
-  const l=luser.value.trim(), p=lpass.value.trim();
-  const snap=await get(ref(db,"contas"));
-  let contas=snap.val()||[];
-  if(!Array.isArray(contas)) contas=Object.values(contas);
-  const u=contas.find(c=>c.login===l && c.senha===p);
-  if(!u){msg.innerText="Acesso negado";return;}
-  localStorage.setItem("user",u.login);
-  carregar();
+btnEntrar.onclick=async()=>{
+ const l=luser.value,p=lpass.value;
+ const snap=await get(ref(db,"contas"));
+ let contas=snap.val()||[];
+ if(!Array.isArray(contas)) contas=Object.values(contas);
+ const u=contas.find(c=>c.login===l&&c.senha===p);
+ if(!u){msg.innerText="Acesso negado";return;}
+ localStorage.setItem("user",u.login);
+ carregar();
 };
 
 /* PAINEL */
 function carregar(){
-  const login=localStorage.getItem("user");
-  tela("painel");
+ const login=localStorage.getItem("user");
+ tela("painel");
 
-  onValue(ref(db,"contas"),snap=>{
-    let contas=snap.val()||[];
-    if(!Array.isArray(contas)) contas=Object.values(contas);
-    const u=contas.find(c=>c.login===login);
-    if(!u) return;
+ onValue(ref(db,"contas"),snap=>{
+  let contas=snap.val()||[];
+  if(!Array.isArray(contas)) contas=Object.values(contas);
+  const u=contas.find(c=>c.login===login);
+  if(!u) return;
 
-    titulo.innerText=u.tipo+" – "+u.login;
-    saldo.innerText="R$ "+moeda(u.saldo);
-    bloq.innerText=moeda(u.bloq);
-    boxFundador.classList.toggle("hidden",u.tipo!=="Fundador");
-    carregarIndicadores(login);
-  });
+  titulo.innerText=u.tipo+" - "+u.login;
+  saldo.innerText=u.saldo;
+  bloq.innerText=u.bloq;
+  boxFundador.classList.toggle("hidden",u.tipo!=="Fundador");
+  listarContas();
+  carregarIndicadores(login);
+ });
 }
 
 /* INDICADORES */
 function carregarIndicadores(login){
-  onValue(ref(db,`indicadores/${login}`),snap=>{
-    indicadores.innerHTML="";
-    const dados=snap.val()||{};
-    for(const id in dados){
-      indicadores.innerHTML+=`${dados[id].nome}: <b>${dados[id].valor}</b><br>`;
-    }
-  });
+ onValue(ref(db,"indicadores/"+login),snap=>{
+  indicadores.innerHTML="";
+  const d=snap.val()||{};
+  for(const id in d){
+   indicadores.innerHTML+=`${d[id].nome}: <b>${d[id].valor}</b><br>`;
+  }
+ });
 }
 
-/* NB DADOS */
-btnNBDados.onclick = async ()=>{
-  const s=prompt("Senha NB:");
-  const snap=await get(ref(db,"config/nb"));
-  if(!snap.exists() || snap.val()!==s) return alert("Senha inválida");
-
-  modoNB=true;
-  btnCriarIndicador.classList.remove("hidden");
-  btnEditarIndicador.classList.remove("hidden");
+/* NB */
+btnNBDados.onclick=async()=>{
+ const s=prompt("Senha NB:");
+ const snap=await get(ref(db,"config/nb"));
+ if(!snap.exists()||snap.val()!==s) return alert("Senha inválida");
+ modoNB=true;
+ btnCriarIndicador.classList.remove("hidden");
+ btnEditarIndicador.classList.remove("hidden");
 };
 
-/* CRIAR */
-btnCriarIndicador.onclick = async ()=>{
-  if(!modoNB) return;
-  const nome=prompt("Nome:");
-  const valor=prompt("Valor:");
-  if(!nome||valor===null) return;
-  await set(push(ref(db,`indicadores/${localStorage.getItem("user")}`)),{nome,valor});
+/* CRIAR / EDITAR */
+btnCriarIndicador.onclick=async()=>{
+ if(!modoNB) return;
+ const nome=prompt("Nome"),valor=prompt("Valor");
+ if(!nome||valor===null) return;
+ await set(push(ref(db,"indicadores/"+localStorage.getItem("user"))),{nome,valor});
 };
 
-/* EDITAR */
-btnEditarIndicador.onclick = async ()=>{
-  if(!modoNB) return;
-  const r=ref(db,`indicadores/${localStorage.getItem("user")}`);
-  const s=await get(r);
-  const d=s.val()||{};
-  for(const id in d){
-    const n=prompt(d[id].nome,d[id].valor);
-    if(n!==null) d[id].valor=n;
-  }
-  await set(r,d);
+btnEditarIndicador.onclick=async()=>{
+ if(!modoNB) return;
+ const r=ref(db,"indicadores/"+localStorage.getItem("user"));
+ const s=await get(r);const d=s.val()||{};
+ for(const id in d){
+  const n=prompt(d[id].nome,d[id].valor);
+  if(n!==null) d[id].valor=n;
+ }
+ await set(r,d);
+};
+
+/* CONTAS */
+async function listarContas(){
+ const snap=await get(ref(db,"contas"));
+ let contas=snap.val()||[];
+ if(!Array.isArray(contas)) contas=Object.values(contas);
+ listaContas.innerHTML="<b>Contas:</b><br>";
+ contas.forEach(c=>{
+  listaContas.innerHTML+=`${c.login} (${c.tipo})<br>`;
+ });
+}
+
+btnCriarConta.onclick=async()=>{
+ const l=prompt("Login"),s=prompt("Senha");
+ if(!l||!s) return;
+ const snap=await get(ref(db,"contas"));
+ let contas=snap.val()||[];
+ if(!Array.isArray(contas)) contas=Object.values(contas);
+ contas.push({login:l,senha:s,tipo:"Conta",saldo:0,bloq:0});
+ await set(ref(db,"contas"),contas);
+};
+
+btnApagarConta.onclick=async()=>{
+ const l=prompt("Login a apagar:");
+ const snap=await get(ref(db,"contas"));
+ let contas=snap.val()||[];
+ if(!Array.isArray(contas)) contas=Object.values(contas);
+ contas=contas.filter(c=>c.login!==l);
+ await set(ref(db,"contas"),contas);
 };
 
 /* FUNDADOR */
-btnCriarSenhaNB.onclick = async ()=>{
-  const n=prompt("Nova senha NB:");
-  if(!n) return;
-  await set(ref(db,"config/nb"),n);
-  alert("Senha NB atualizada");
+btnCriarSenhaNB.onclick=async()=>{
+ const n=prompt("Nova senha NB:");
+ if(!n) return;
+ await set(ref(db,"config/nb"),n);
 };
 
-btnBloquearNB.onclick = async ()=>{
-  await set(ref(db,"config/nb"),"BLOQUEADO");
-  alert("NB BLOQUEADO");
+btnBloquearNB.onclick=async()=>{
+ await set(ref(db,"config/nb"),"BLOQUEADO");
 };
 
 /* EVENTOS */
