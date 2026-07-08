@@ -2,99 +2,118 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>PORTAL GOV</title>
+<title>Resultados – TSE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:linear-gradient(180deg,#0a7a3d,#f4c430);
-  display:flex;
-  justify-content:center;
-}
-.app{width:100%;max-width:420px;padding:14px}
-.card{
-  background:#fff;
-  border-radius:18px;
-  padding:16px;
-  box-shadow:0 15px 40px rgba(0,0,0,.35)
-}
-h1,h2,h3{text-align:center;color:#0a7a3d}
-button,input{
-  width:100%;padding:12px;margin:6px 0;
-  border-radius:12px;border:1px solid #ccc;font-size:14px
-}
-button{
-  background:linear-gradient(135deg,#0a7a3d,#f4c430);
-  color:#fff;font-weight:700;cursor:pointer
-}
-.red{background:#e74c3c}
-.gray{background:#ddd;color:#222}
-.box{background:#f7fdf9;border-radius:14px;padding:12px;margin:10px 0}
-.hidden{display:none}
-.logo{display:block;margin:0 auto 10px;width:90px}
+*{box-sizing:border-box;font-family:'Roboto',sans-serif}
+body{margin:0;background:#f2f4f7;color:#111}
+header{background:#0b5ed7;color:white;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;font-size:18px}
+header button{background:white;color:#0b5ed7;border:none;padding:6px 12px;border-radius:6px;cursor:pointer}
+#geral,#admin{background:white;margin:12px;border-radius:10px;padding:16px}
+.resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.box{border:1px solid #ddd;border-radius:8px;padding:10px}
+.candidato{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #eee}
+.candidato img{width:42px;height:42px;border-radius:50%}
+.tag{display:inline-block;padding:2px 8px;font-size:11px;border-radius:6px;margin-left:6px;font-weight:700}
+.eleito{background:#0d6efd;color:white;animation:pulse 1s infinite}
+.segundo{background:#ffc107;color:#000;animation:pulse 1s infinite}
+@keyframes pulse{0%{opacity:0.6}50%{opacity:1}100%{opacity:0.6}}
+.barra{height:10px;background:#e9ecef;border-radius:6px;margin-top:6px;overflow:hidden}
+.barra span{display:block;height:100%;width:0%;background:#0b5ed7;transition:.3s}
+.estado{background:#e0e0e0;border:1px solid #ccc;border-radius:8px;padding:12px 6px;text-align:center;cursor:pointer;transition:.3s}
+.estado small{display:block;font-size:12px}
+#estados{margin:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;justify-content:center;align-items:flex-end}
+.modalBox{background:white;width:100%;max-height:90vh;overflow:auto;border-radius:12px 12px 0 0;padding:16px}
+#admin{display:none;border-top:4px solid #0b5ed7}
+#admin input,#admin select{width:100%;padding:8px;margin:6px 0}
+#admin button{background:#0b5ed7;color:white;border:none;padding:10px;border-radius:6px;width:100%;cursor:pointer}
+.adminCand{border:1px solid #ddd;border-radius:8px;padding:10px;margin-bottom:8px}
+.adminCand .acoes button{width:100%;margin-top:4px}
+.adminCand .eleitoBtn{background:#0d6efd}
+.adminCand .segundoBtn{background:#ffc107;color:#000}
+.adminCand .removerBtn{background:#dc3545}
 </style>
 </head>
-
 <body>
-<div class="app"><div class="card">
 
-<!-- HOME -->
-<div id="home">
-<img class="logo" src="https://th.bing.com/th/id/R.c124832c487384d5796e22164b86e398?rik=Gd7F5prDhxIuaw&riu=http%3a%2f%2fprefeituradesenadorcanedo.sigepnet.com.br%2fimages%2flogo_portaltransparencia.png&ehk=b%2b2iErEX7bzHO8%2fVq5cpfhJikspTJklhTGLwrbUIGXo%3d&risl=&pid=ImgRaw&r=0">
-<h1>PORTAL GOV</h1>
-<button id="btnAcessar">🔐 Acessar</button>
+<header>
+  <img src="https://www.estudotop.com.br/wp-content/uploads/elementor/thumbs/logo-tse-unificado_3-q05569dfkxnbyd38wsipr6u6y7klwz2ncpfpehoub2.png" 
+       alt="TRIBUNAL SUPERIOR ELEITORAL" 
+       style="width:50px; height:auto; vertical-align:middle; margin-right:10px;">
+  TRIBUNAL SUPERIOR ELEITORAL – TSE
+  <button onclick="login()">NAÇÃO BRASILEIRA</button>
+</header>
+
+<div id="geral">
+<h2>Apuração Nacional</h2>
+<div class="barra"><span id="barraGeral"></span></div>
+<p><strong>Urnas:</strong> <span id="gUrnas">0%</span></p>
+<div class="resumo">
+  <div class="box"><span>Total votos:  </span><strong id="gTotal">0</strong></div>
+  <div class="box"><span>Brancos:  </span><strong id="gBrancos">0</strong></div>
+  <div class="box"><span>Nulos:  </span><strong id="gNulos">0</strong></div>
+</div>
+<h3>Presidente</h3>
+<div id="presidenteNacional"></div>
 </div>
 
-<!-- LOGIN -->
-<div id="login" class="hidden">
-<h2>Login</h2>
-<input id="luser" placeholder="Login">
-<input id="lpass" type="password" placeholder="Senha">
-<button id="btnEntrar">Entrar</button>
-<button id="btnVoltar" class="gray">Voltar</button>
-<p id="msg"></p>
+<div id="estados"></div>
+
+<div class="modal" id="modal">
+  <div class="modalBox">
+    <h2 id="tituloEstado"></h2>
+    <p><strong>Urnas:</strong> <span id="eUrnas"></span>%</p>
+    <div class="barra"><span id="barraEstado"></span></div>
+    <p><strong>Brancos:</strong> <span id="eBrancos"></span></p>
+    <p><strong>Nulos:</strong> <span id="eNulos"></span></p>
+    <div id="listaCandidatos"></div>
+    <button onclick="fechar()">Fechar</button>
+  </div>
 </div>
 
-<!-- PAINEL -->
-<div id="painel" class="hidden">
-<img class="logo" src="https://th.bing.com/th/id/R.4774ee1801465a0a12fb465778ff355a?rik=FctvyUgDltGE%2bg&riu=http%3a%2f%2ftransparencia.prisinaloa.org.mx%2fimages%2fPDTC.png&ehk=81S3%2fIiQtaD2GMylXiBtLu7uJJKKWV0mx4W%2faAtVIqQ%3d&risl=&pid=ImgRaw&r=0">
-<h2 id="titulo"></h2>
+<div id="admin">
+<h2>Painel do Fundador</h2>
+<select id="admEstado"></select>
+<label>Cor da UF</label>
+<input type="color" id="admCor" value="#0b5ed7">
+<button onclick="definirCor()">Definir cor do estado</button>
 
-<div class="box">
-Saldo: <span id="saldo"></span><br>
-Bloqueado: <span id="bloq"></span>
-</div>
-
-<div class="box">
-<h3>📊 INDICADORES</h3>
-<div id="indicadores"></div>
-<button id="btnCriarIndicador" class="hidden">➕ Criar</button>
-<button id="btnEditarIndicador" class="hidden">✏️ Editar</button>
-</div>
-
-<div class="box hidden" id="boxFundador">
-<h3>👑 ADMINISTRAÇÃO</h3>
-<button id="btnCriarConta">➕ Criar Conta</button>
-<button id="btnApagarConta" class="red">🗑 Apagar Conta</button>
-<div id="listaContas"></div>
 <hr>
-<button id="btnCriarSenhaNB">🔐 Criar / Alterar senha NB</button>
-<button id="btnBloquearNB" class="red">🚫 Bloquear NB</button>
+<select id="admCargo">
+  <option>presidente</option>
+  <option>governador</option>
+  <option>senador</option>
+  <option>deputado</option>
+</select>
+<input id="admNome" placeholder="Nome">
+<input id="admPartido" placeholder="Partido">
+<input id="admFoto" placeholder="Foto URL">
+<input type="number" id="admVotos" placeholder="Votos">
+<button onclick="criarCandidato()">Criar candidato</button>
+
+<hr>
+<input type="number" id="admUrnas" placeholder="% Urnas">
+<input type="number" id="admBrancos" placeholder="Brancos">
+<input type="number" id="admNulos" placeholder="Nulos">
+<button onclick="atualizarEstado()">Atualizar estado</button>
+
+<hr>
+<h3>Controle Geral de Urnas</h3>
+<p>Altere o % geral manualmente:</p>
+<input type="number" id="admGeralUrnas" placeholder="% Geral" min="0" max="100">
+<button onclick="atualizarGeralManual()">Atualizar Geral</button>
+
+<hr>
+<div id="listaAdmin"></div>
 </div>
-
-<button id="btnNBDados">🔑 NB DADOS</button>
-<button id="btnSair" class="red">🚪 Sair</button>
-
-</div></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
+import { getDatabase, ref, set, push, update, onValue, remove, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyAE-c6y2Z1JsQplCfj1UNW7Wyr4ssCsJQU",
   authDomain: "tse-painel.firebaseapp.com",
@@ -102,153 +121,234 @@ const firebaseConfig = {
   projectId: "tse-painel",
   storageBucket: "tse-painel.firebasestorage.app",
   messagingSenderId: "818733405394",
-  appId: "1:818733405394:web:8e3e3e45062e3122e9490b"
+  appId: "1:818733405394:web:8e3e3e45062e3122e9490b",
+  measurementId: "G-49XLVVE7D5"
 };
 
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 const db = getDatabase(app);
 
-const FUNDADOR_LOGIN="FUNDADOR";
-const FUNDADOR_SENHA="2007";
-let modoNB=false;
+const senha="7070";
+const avatar="https://via.placeholder.com/100?text=Foto";
+const estados=["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO","EXTERIOR"];
 
-/* TELAS */
-function tela(id){
- ["home","login","painel"].forEach(t=>document.getElementById(t).classList.add("hidden"));
- document.getElementById(id).classList.remove("hidden");
+const estadosDiv=document.getElementById("estados");
+const sel=document.getElementById("admEstado");
+
+// Inicializa estados no DB se não existir
+estados.forEach(e=>{
+  const estadoRef = ref(db,'estados/'+e);
+  get(estadoRef).then(snap=>{
+    if(!snap.exists()){
+      set(estadoRef,{ urnas:0, brancos:0, nulos:0, cor:"#e0e0e0", candidatos:{} });
+    }
+  });
+  estadosDiv.innerHTML+=`<div class="estado" id="uf-${e}" onclick="abrir('${e}')">${e}<small>0%</small></div>`;
+  sel.innerHTML+=`<option>${e}</option>`;
+});
+
+let overrideGeralUrnas = null;
+
+// Funções Admin
+window.login = function(){ 
+  if(prompt("Senha do fundador")==senha){ 
+    admin.style.display="block"; 
+    atualizarListaAdmin(); 
+  } 
+}
+window.definirCor = function(){
+  const estado = sel.value;
+  const cor = document.getElementById("admCor").value;
+  update(ref(db,'estados/'+estado), { cor: cor });
 }
 
-/* INIT */
-async function init(){
- const snap=await get(ref(db,"contas"));
- let contas=snap.val()||[];
- if(!Array.isArray(contas)) contas=Object.values(contas);
+// Cria candidato
+window.criarCandidato = async function(){
+  if(!admNome.value || !admPartido.value) return alert("Preencha nome e partido");
+  const novo = {
+    nome: admNome.value,
+    partido: admPartido.value,
+    cargo: admCargo.value,
+    votos: Number(admVotos.value)||0,
+    foto: admFoto.value||avatar,
+    status: ""
+  };
 
- if(!contas.find(c=>c.login===FUNDADOR_LOGIN)){
-   contas.push({login:FUNDADOR_LOGIN,senha:FUNDADOR_SENHA,tipo:"Fundador",saldo:1000000,bloq:0});
-   await set(ref(db,"contas"),contas);
- }
-}
-init();
-
-/* LOGIN */
-btnEntrar.onclick=async()=>{
- const l=luser.value,p=lpass.value;
- const snap=await get(ref(db,"contas"));
- let contas=snap.val()||[];
- if(!Array.isArray(contas)) contas=Object.values(contas);
- const u=contas.find(c=>c.login===l&&c.senha===p);
- if(!u){msg.innerText="Acesso negado";return;}
- localStorage.setItem("user",u.login);
- carregar();
-};
-
-/* PAINEL */
-function carregar(){
- const login=localStorage.getItem("user");
- tela("painel");
-
- onValue(ref(db,"contas"),snap=>{
-  let contas=snap.val()||[];
-  if(!Array.isArray(contas)) contas=Object.values(contas);
-  const u=contas.find(c=>c.login===login);
-  if(!u) return;
-
-  titulo.innerText=u.tipo+" - "+u.login;
-  saldo.innerText=u.saldo;
-  bloq.innerText=u.bloq;
-  boxFundador.classList.toggle("hidden",u.tipo!=="Fundador");
-  listarContas();
-  carregarIndicadores(login);
- });
-}
-
-/* INDICADORES */
-function carregarIndicadores(login){
- onValue(ref(db,"indicadores/"+login),snap=>{
-  indicadores.innerHTML="";
-  const d=snap.val()||{};
-  for(const id in d){
-   indicadores.innerHTML+=`${d[id].nome}: <b>${d[id].valor}</b><br>`;
+  if(admCargo.value==="presidente"){
+    for(const uf of estados){
+      const cRef = push(ref(db,'estados/'+uf+'/candidatos'));
+      await set(cRef, novo);
+    }
+  } else {
+    const cRef = push(ref(db,'estados/'+sel.value+'/candidatos'));
+    await set(cRef, novo);
   }
- });
+
+  atualizarListaAdmin();
 }
 
-/* NB */
-btnNBDados.onclick=async()=>{
- const s=prompt("Senha NB:");
- const snap=await get(ref(db,"config/nb"));
- if(!snap.exists()||snap.val()!==s) return alert("Senha inválida");
- modoNB=true;
- btnCriarIndicador.classList.remove("hidden");
- btnEditarIndicador.classList.remove("hidden");
-};
-
-/* CRIAR / EDITAR */
-btnCriarIndicador.onclick=async()=>{
- if(!modoNB) return;
- const nome=prompt("Nome"),valor=prompt("Valor");
- if(!nome||valor===null) return;
- await set(push(ref(db,"indicadores/"+localStorage.getItem("user"))),{nome,valor});
-};
-
-btnEditarIndicador.onclick=async()=>{
- if(!modoNB) return;
- const r=ref(db,"indicadores/"+localStorage.getItem("user"));
- const s=await get(r);const d=s.val()||{};
- for(const id in d){
-  const n=prompt(d[id].nome,d[id].valor);
-  if(n!==null) d[id].valor=n;
- }
- await set(r,d);
-};
-
-/* CONTAS */
-async function listarContas(){
- const snap=await get(ref(db,"contas"));
- let contas=snap.val()||[];
- if(!Array.isArray(contas)) contas=Object.values(contas);
- listaContas.innerHTML="<b>Contas:</b><br>";
- contas.forEach(c=>{
-  listaContas.innerHTML+=`${c.login} (${c.tipo})<br>`;
- });
+// Atualiza estado
+window.atualizarEstado = function(){
+  const estado = sel.value;
+  update(ref(db,'estados/'+estado),{
+    urnas:Number(admUrnas.value)||0,
+    brancos:Number(admBrancos.value)||0,
+    nulos:Number(admNulos.value)||0
+  });
 }
 
-btnCriarConta.onclick=async()=>{
- const l=prompt("Login"),s=prompt("Senha");
- if(!l||!s) return;
- const snap=await get(ref(db,"contas"));
- let contas=snap.val()||[];
- if(!Array.isArray(contas)) contas=Object.values(contas);
- contas.push({login:l,senha:s,tipo:"Conta",saldo:0,bloq:0});
- await set(ref(db,"contas"),contas);
-};
+// Atualização manual geral
+window.atualizarGeralManual = function(){
+  const valor = Number(document.getElementById("admGeralUrnas").value);
+  if(valor<0||valor>100) return alert("Digite um valor entre 0 e 100");
+  overrideGeralUrnas = valor;
+  gUrnas.textContent = valor + "%";
+  barraGeral.style.width = valor + "%";
+}
 
-btnApagarConta.onclick=async()=>{
- const l=prompt("Login a apagar:");
- const snap=await get(ref(db,"contas"));
- let contas=snap.val()||[];
- if(!Array.isArray(contas)) contas=Object.values(contas);
- contas=contas.filter(c=>c.login!==l);
- await set(ref(db,"contas"),contas);
-};
+// Atualização em tempo real dos estados
+estados.forEach(uf=>{
+  onValue(ref(db,'estados/'+uf), snap=>{
+    const d = snap.val();
+    const div = document.getElementById("uf-"+uf);
+    div.style.background = d.cor;
+    div.innerHTML = `${uf}<small>${d.urnas}%</small>`;
+    atualizarGeral();
+    if(modal.style.display==="flex" && tituloEstado.textContent===uf) abrir(uf);
+  });
+});
 
-/* FUNDADOR */
-btnCriarSenhaNB.onclick=async()=>{
- const n=prompt("Nova senha NB:");
- if(!n) return;
- await set(ref(db,"config/nb"),n);
-};
+// Lista admin
+function atualizarListaAdmin(){
+  listaAdmin.innerHTML = "";
+  estados.forEach(uf => {
+    const estadoRef = ref(db, `estados/${uf}/candidatos`);
+    get(estadoRef).then(snap => {
+      const cData = snap.val()||{};
+      Object.entries(cData).forEach(([key,c])=>{
+        const div = document.createElement("div");
+        div.className = "adminCand";
+        div.innerHTML = `
+          <strong>${c.nome}</strong> (${c.partido}) – ${uf}<br>
+          <input type="number" value="${c.votos}">
+          <div class="acoes">
+            <button class="eleitoBtn">ELEITO</button>
+            <button class="segundoBtn">2º TURNO</button>
+            <button class="removerBtn">Excluir</button>
+          </div>
+        `;
+        div.querySelector("input").addEventListener("change",()=>update(ref(db, `estados/${uf}/candidatos/${key}`), { votos: Number(div.querySelector("input").value) }));
+        div.querySelector(".eleitoBtn").addEventListener("click",()=>update(ref(db, `estados/${uf}/candidatos/${key}`), { status: "eleito" }));
+        div.querySelector(".segundoBtn").addEventListener("click",()=>update(ref(db, `estados/${uf}/candidatos/${key}`), { status: "segundo" }));
+        div.querySelector(".removerBtn").addEventListener("click",()=>{ if(confirm(`Deseja realmente excluir ${c.nome}?`)) remove(ref(db, `estados/${uf}/candidatos/${key}`)).then(()=> div.remove()); });
+        listaAdmin.appendChild(div);
+      });
+    });
+  });
+}
 
-btnBloquearNB.onclick=async()=>{
- await set(ref(db,"config/nb"),"BLOQUEADO");
-};
+// Atualização geral
+function atualizarGeral(){
+  let total=0, br=0, nu=0;
+  let pres={};
+  let somaUrnas=0, countUrnas=0;
 
-/* EVENTOS */
-btnAcessar.onclick=()=>tela("login");
-btnVoltar.onclick=()=>tela("home");
-btnSair.onclick=()=>{localStorage.clear();tela("home");};
+  estados.forEach(uf=>{
+    get(ref(db,'estados/'+uf)).then(snap=>{
+      const d = snap.val();
+      br += d.brancos; nu += d.nulos;
+
+      somaUrnas += d.urnas;
+      countUrnas++;
+
+      Object.values(d.candidatos||{}).forEach(c=>{
+        if(c.cargo==="presidente"){
+          pres[c.nome] = pres[c.nome] || {v:0,f:c.foto,p:c.partido,s:c.status};
+          pres[c.nome].v += c.votos;
+          pres[c.nome].s = c.status;
+          total += c.votos;
+        }
+      });
+
+      gTotal.textContent = total;
+      gBrancos.textContent = br;
+      gNulos.textContent = nu;
+
+      presidenteNacional.innerHTML="";
+      Object.entries(pres).sort((a,b)=>b[1].v-a[1].v).forEach(p=>{
+        const perc=((p[1].v/total)*100||0).toFixed(1);
+        const tag=p[1].s==="eleito"?'<span class="tag eleito">ELEITO</span>':p[1].s==="segundo"?'<span class="tag segundo">2º TURNO</span>':"";
+        presidenteNacional.innerHTML+=`
+        <div class="candidato">
+          <img src="${p[1].f||avatar}">
+          <div>
+            <strong>${p[0]}</strong> (${p[1].p}) ${tag}<br>
+            ${p[1].v} votos • ${perc}% 
+            <div class="barra"><span style="width:${perc}%"></span></div>
+          </div>
+        </div>`;
+      });
+
+      if(overrideGeralUrnas===null){
+        const mediaUrnas = (somaUrnas / countUrnas).toFixed(1);
+        gUrnas.textContent = mediaUrnas + "%";
+        barraGeral.style.width = mediaUrnas + "%";
+      }
+    });
+  });
+}
+
+// Modal de estado
+window.abrir = function(uf) {
+  modal.style.display = "flex";
+  tituloEstado.textContent = uf;
+
+  onValue(ref(db,'estados/'+uf), snap => {
+    const d = snap.val();
+    eUrnas.textContent = d.urnas;
+    eBrancos.textContent = d.brancos;
+    eNulos.textContent = d.nulos;
+    barraEstado.style.width = d.urnas + "%";
+    barraEstado.style.background = d.cor;
+
+    listaCandidatos.innerHTML = "";
+
+    // Ordem de cargos
+    const ordemCargos = ["presidente", "governador", "senador", "deputado"];
+
+    ordemCargos.forEach(cargo => {
+      const candidatosCargo = Object.values(d.candidatos || {}).filter(c => c.cargo === cargo);
+
+      if(candidatosCargo.length === 0) return; // pula se não houver candidatos desse cargo
+
+      // Adicionar título do cargo
+      listaCandidatos.innerHTML += `<h3 class="cargo-titulo">${cargo.charAt(0).toUpperCase() + cargo.slice(1)}</h3>`;
+
+      // Total de votos do cargo específico
+      const totalVotosCargo = candidatosCargo.reduce((a, b) => a + b.votos, 0) || 1;
+
+      candidatosCargo.forEach(c => {
+        const perc = ((c.votos / totalVotosCargo) * 100).toFixed(1);
+        const tag = c.status === "eleito" ? '<span class="tag eleito">ELEITO</span>' :
+                    c.status === "segundo" ? '<span class="tag segundo">2º TURNO</span>' : "";
+
+        listaCandidatos.innerHTML += `
+        <div class="candidato">
+          <img src="${c.foto || avatar}">
+          <div>
+            <strong>${c.nome}</strong> (${c.partido}) ${tag}<br>
+            ${c.votos} votos • ${perc}% 
+            <div class="barra"><span style="width:${perc}%"></span></div>
+          </div>
+        </div>`;
+      });
+    });
+  });
+}
+
+window.fechar = function(){ modal.style.display="none"; }
+
 </script>
-
 </body>
 </html>
